@@ -1,3 +1,6 @@
+![image](https://github.com/user-attachments/assets/00cfb419-c96b-4d4c-bb8d-650c171fd897)
+
+
 ## README.MD  
 This is a website that is created for people who want to learn more about DevOps  
 
