@@ -12,6 +12,10 @@ jobs:
   validate-branch:
     runs-on: ubuntu-latest
     steps:
+      - name: parse-data
+        id: parse-data
+        uses: tj-actions/branch_names@v8
+
       - name: Print info about actions
         id: repo-info
         run: |
