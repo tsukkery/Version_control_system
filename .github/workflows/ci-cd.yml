@@ -1,0 +1,19 @@
+name: Version update runner
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+    - release
+env:
+  NAME_VERSION_FILE: version
+jobs:
+  validate-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: step 1
+        run: |
+          echo "name step 1"
+          echo "name step 1 - second command"
+      - name: step 2
+        run: echo "name step 2"
