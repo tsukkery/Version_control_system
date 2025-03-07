@@ -7,8 +7,20 @@ on:
       - release
     paths-ignore:
       - '**/docs/**'
+
+env:
+  NAME_VERSION_FILE: ${{ github.workspace }}/version/version
+  RELEASE_BRANCH: release
+  MINOR: minor
+  PATCH: patch
+  VERSION_UP: .github/workflows/version_up.py
+  REPO_NAME: ${{ github.event.repository.name }}
+  PR_NUMBER: ${{ github.event.number }}
+  URL_REPO: ${{ github.server_url }}/${{ github.repository }}
+  # DOCKER_REPO: ${{ secrets.DOCKER_HUB_LOGIN }}/${{env.REPO_NAME}}
   
 jobs:
+
 
   validate-branch:
     runs-on: ubuntu-latest
@@ -30,34 +42,73 @@ jobs:
           echo "REF_NAME     ${{github.ref_name}}"
           echo "DEFAULT_BRANCH  ${{steps.parse-data.outputs.default_branch}}"
 
-  run-script:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Validate branch (feature/hotfix)
-        id: validate_branch
-        if: |
-          contains(steps.parse-data.outputs.current_branch, 'feature') || 
-          contains(steps.parse-data.outputs.current_branch, 'hotfix')
-        run: echo "Valid branch"
-
-      - name: Run minor version update script
-        id: update-minor-version
-        if: |
-          contains(steps.parse-data.outputs.current_branch, 'feature')
-        run: |
-          python version_up.py minor
-
-      - name: Run patch version update script
-        id: update-patch-version
-        if: |
-          contains(steps.parse-data.outputs.current_branch, 'hotfix')
-        run: |
-          python version_up.py patch
-
   
-  tests-fixme:
+  tests:
     name: (TST)
     needs: validate-branch
     uses: tsukkery/Version_control_system/.github/workflows/test.yml@release
     with:
       version: alpha
+
+  security:
+    name: (SEC)
+    needs: tests
+    uses: tsukkery/Version_control_system/.github/workflows/security.yml@release
+
+  update-version:
+    needs: security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.13.2'
+
+      - name: Run Python script
+        run: |
+          python .github/workflows/version_up.py patch
+
+      - name: Commit and push changes
+        run: |
+          git add version version_log
+          git commit -m "Update version and log"
+          git push origin release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker-push:
+    name: (CI) Docker push
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs: update-version
+    env:
+      tag: ${{needs.update-version.outputs.tag}}
+    steps:
+      - name: Prepare env 
+        run: | 
+          echo "show variables"
+          echo [${{env.tag}}]
+      - name: Сheckout on [${{env.RELEASE_BRACH}}] and v [${{env.tag}}]
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_HUB_LOGIN }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image to DockerHub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_LOGIN }}/${{env.REPO_NAME}}:v${{env.tag}}
+
+        
