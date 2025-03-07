@@ -10,6 +10,7 @@ on:
   
 jobs:
 
+
   validate-branch:
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +31,19 @@ jobs:
           echo "REF_NAME     ${{github.ref_name}}"
           echo "DEFAULT_BRANCH  ${{steps.parse-data.outputs.default_branch}}"
 
+  
+  tests-fixme:
+    name: (TST)
+    needs: validate-branch
+    uses: tsukkery/Version_control_system/.github/workflows/test.yml@release
+    with:
+      version: alpha
+
+  security:
+    name: (SEC)
+    needs: tests-fixme
+    uses: tsukkery/Version_control_system/.github/workflows/security.yml@release
+
   run-script:
     runs-on: ubuntu-latest
     steps:
@@ -39,25 +53,17 @@ jobs:
           contains(steps.parse-data.outputs.current_branch, 'feature') || 
           contains(steps.parse-data.outputs.current_branch, 'hotfix')
         run: echo "Valid branch"
-
+    
       - name: Run minor version update script
         id: update-minor-version
         if: |
           contains(steps.parse-data.outputs.current_branch, 'feature')
         run: |
           python version_up.py minor
-
+    
       - name: Run patch version update script
         id: update-patch-version
         if: |
           contains(steps.parse-data.outputs.current_branch, 'hotfix')
         run: |
           python version_up.py patch
-
-  
-  tests-fixme:
-    name: (TST)
-    needs: validate-branch
-    uses: tsukkery/Version_control_system/.github/workflows/test.yml@release
-    with:
-      version: alpha
