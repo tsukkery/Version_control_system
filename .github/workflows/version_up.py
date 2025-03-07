@@ -1,71 +1,46 @@
 import os
+import datetime
 import sys
-from datetime import datetime
 
-VERSION_FILE = 'version'
-LOG_FILE = 'version_log'
+if not os.path.exists('version'):
+    with open('version', 'w') as f:
+        f.write('1.0.0')
 
-def get_current_timestamp():
-    now = datetime.now()
-    return now.strftime('%d.%m.%Y %H:%M:%S.') + f'{now.microsecond // 1000:03d}'
+with open('version', 'r') as f:
+    version = f.read().strip()
 
-def read_version():
-    if not os.path.exists(VERSION_FILE):
-        with open(VERSION_FILE, 'w') as f:
-            f.write('1.0.0\n')
-    with open(VERSION_FILE, 'r') as f:
-        return f.read().strip()
+if not all(i.isdigit() for i in version.split('.')):
+    print("Некорректный формат версии")
+    exit()
 
-def write_version(version):
-    with open(VERSION_FILE, 'w') as f:
-        f.write(version)
+if len(sys.argv) < 2:
+    print("Не указан параметр обновления (major, minor, patch)!")
+    exit()
 
-def print_version():
-    print(read_current_version())
+update_type = sys.argv[1]
 
-def log_version_change(old_version, new_version, update_type):
-    timestamp = datetime.now().strftime('%d.%m.%Y %H:%M:%S.%f')[:-3]
-    log_entry = f"[{new_version}] <- [{old_version}] [{timestamp}] {update_type} update\n"
-    with open(LOG_FILE, 'a') as log_file:
-        log_file.write(log_entry)
+major, minor, patch = map(int, version.split('.'))
 
-def increment_version(version, update_type):
-    major, minor, patch = map(int, version.split('.'))
+if update_type == "major":
+    major += 1
+    minor = 0
+    patch = 0
+elif update_type == "minor":
+    minor += 1
+    patch = 0
+elif update_type == "patch":
+    patch += 1
+else:
+    print("Некорректный параметр обновления!")
+    exit()
 
-    if update_type == 'major':
-        major += 1
-        minor = 0
-        patch = 0
-    elif update_type == 'minor':
-        minor += 1
-        patch = 0
-    elif update_type == 'patch':
-        patch += 1
+new_version = f"{major}.{minor}.{patch}"
 
-    new_version = f'{major}.{minor}.{patch}'
-    write_version(new_version)
-    timestamp = get_current_timestamp()
-    log_entry = f'[{new_version}] <- [{current}] [{timestamp}] {update_type} update'
-    prepend_to_file(VERSION_LOG_FILE, log_entry)
-    print(f"Версия обновлена до {new_version}")
+with open('version', 'w') as f:
+    f.write(new_version)
 
-    return f"{major}.{minor}.{patch}"
+current_time = datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S.%f")[:-3]
+with open('version_log', 'a') as f:
+    f.write(f"[{new_version}] <- [{version}] [{current_time}] {update_type} update\n")
 
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <update_type>")
-        print("update_type should be one of: major, minor, patch")
-        sys.exit(1)
-
-    update_type = sys.argv[1]
-
-    current_version = read_version()
-    new_version = increment_version(current_version, update_type)
-
-    write_version(new_version)
-    log_version_change(current_version, new_version, update_type)
-
-    print(f"Version updated from {current_version} to {new_version}")
-
-if __name__ == "__main__":
-    main()
+print(f"Версия обновлена на {new_version}")
