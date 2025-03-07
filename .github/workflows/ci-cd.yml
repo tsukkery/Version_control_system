@@ -59,10 +59,6 @@ jobs:
     needs: security
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -78,8 +74,6 @@ jobs:
           git add version version_log
           git commit -m "Update version and log"
           git push origin release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker-push:
     name: (CI) Docker push
