@@ -4,13 +4,9 @@ on:
   pull_request:
     types: [closed]
     branches:
-    - release
-env:
-  NAME_VERSION_FILE: version
-  RELEASE_BRACH: release
-  MINOR: minor
-  PATCH: patch
-  VERSION_UP: .github/workflows/version_up.py
+      - release
+    paths-ignore:
+      - '**/docs/**'
   
 jobs:
   validate-branch:
