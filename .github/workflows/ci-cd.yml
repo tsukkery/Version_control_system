@@ -60,7 +60,7 @@ jobs:
 
       - name: Run Python script
         run: |
-          python .github/workflows/script.py patch
+          python .github/workflows/version_up.py patch
 
       - name: Commit and push changes
         run: |
