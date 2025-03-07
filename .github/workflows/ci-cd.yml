@@ -61,6 +61,11 @@ jobs:
     steps:
       - name: Сheckout on [${{env.RELEASE_BRACH}}] and v [${{env.tag}}]
         uses: actions/checkout@v2
+
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
         
       - name: Set up Python
         uses: actions/setup-python@v2
