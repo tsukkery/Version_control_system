@@ -7,6 +7,17 @@ on:
       - release
     paths-ignore:
       - '**/docs/**'
+
+env:
+  NAME_VERSION_FILE: ${{ github.workspace }}/version/version
+  RELEASE_BRACH: release
+  MINOR: minor
+  PATCH: patch
+  VERSION_UP: .github/workflows/version_up.py
+  REPO_NAME: ${{ github.event.repository.name }}
+  PR_NUMBER: ${{ github.event.number }}
+  URL_REPO: ${{ github.server_url }}/${{ github.repository }}
+  # DOCKER_REPO: ${{ secrets.DOCKER_HUB_LOGIN }}/${{env.REPO_NAME}}
   
 jobs:
 
