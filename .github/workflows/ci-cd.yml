@@ -9,6 +9,7 @@ on:
       - '**/docs/**'
   
 jobs:
+
   validate-branch:
     runs-on: ubuntu-latest
     steps:
@@ -52,3 +53,11 @@ jobs:
           contains(steps.parse-data.outputs.current_branch, 'hotfix')
         run: |
           python version_up.py patch
+
+  
+  tests-fixme:
+    name: (TST)
+    needs: validate-branch
+    uses: tsukkery/Version_control_system/.github/workflows/test.yml@release
+    with:
+      version: alpha
