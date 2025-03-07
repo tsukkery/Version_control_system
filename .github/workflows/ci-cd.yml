@@ -59,7 +59,9 @@ jobs:
     needs: security
     runs-on: ubuntu-latest
     steps:
-
+      - name: Сheckout on [${{env.RELEASE_BRACH}}] and v [${{env.tag}}]
+        uses: actions/checkout@v2
+        
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
