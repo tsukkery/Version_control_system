@@ -1,0 +1,31 @@
+name: Test all data
+on: 
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: "contains version of application"
+
+jobs: 
+  unit:
+    name: Unit-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run test
+        run: |
+          echo "simple run test"
+  smoke:
+    name: Smoke-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run test
+        run: |
+          echo "simple run test"
+  fazz:
+    name: Fazzing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run test
+        run: |
+          echo "simple run test"          
