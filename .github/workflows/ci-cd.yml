@@ -56,17 +56,14 @@ jobs:
     uses: tsukkery/Version_control_system/.github/workflows/security.yml@release
 
   update-version:
+    permissions:
+      contents: write
     needs: security
     runs-on: ubuntu-latest
     steps:
       - name: Сheckout on [${{env.RELEASE_BRACH}}] and v [${{env.tag}}]
         uses: actions/checkout@v2
 
-      - name: Setup git config
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-        
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -75,11 +72,14 @@ jobs:
       - name: Run Python script
         run: |
           python .github/workflows/version_up.py patch
-
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
       - name: Commit and push changes
         run: |
-          git add version version_log
-          git commit -m "Update version and log"
+          git add .
+          git commit -m "Update version"
           git push origin release
 
   docker-push:
