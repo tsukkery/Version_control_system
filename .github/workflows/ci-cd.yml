@@ -132,7 +132,10 @@ jobs:
     name: (CI) Docker push
     permissions:
       contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.docker-build-push.outputs.digest }}
     needs: update-version
     env:
       tag: ${{needs.update-version.outputs.tag}}
@@ -151,7 +154,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_LOGIN }}/${{ env.REPO_NAME }}:latest
