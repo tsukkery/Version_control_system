@@ -111,6 +111,7 @@ jobs:
             git push -u origin ${{ env.RELEASE_BRANCH }} --tags
           else
             echo "No changes to commit."
+          fi
 
       - name: Set version label
         if: success()
