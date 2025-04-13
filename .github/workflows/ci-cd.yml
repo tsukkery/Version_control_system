@@ -96,12 +96,11 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
-      - name: Commit and set tag
+      - name: Commit and push changes
         run: |
           git add .
-          git commit -m "${{ env.COMMIT_MSG }}"
-          git tag -a v${{ env.TAG_MSG }} -m "update tag"
-          git push -u origin ${{ env.RELEASE_BRANCH }} --tags
+          git commit -m "Update version"
+          git push origin ${RELEASE}
 
       - name: Set version label
         if: success()
