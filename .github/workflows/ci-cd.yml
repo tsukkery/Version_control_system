@@ -133,6 +133,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      repository-projects: write
+      id-token: write
     runs-on: ubuntu-latest
     outputs:
       digest: ${{ steps.docker-build-push.outputs.digest }}
@@ -140,6 +142,11 @@ jobs:
     env:
       tag: ${{needs.update-version.outputs.tag}}
     steps:
+      - name: Prepare env 
+        run: | 
+          echo "show variables"
+          echo [${{env.tag}}]
+          
       - name: Checkout on [${{ env.RELEASE_BRANCH }}]
         uses: actions/checkout@v4
 
@@ -156,6 +163,7 @@ jobs:
           context: .
           file: ./dockerfile
           push: true
+          tags: ${{ secrets.DOCKER_HUB_LOGIN }}/${{env.REPO_NAME}}:v${{env.tag}}
           
       - name: Set DockerHub label
         if: success()
