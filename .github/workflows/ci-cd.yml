@@ -58,8 +58,11 @@ jobs:
   update-version:
     permissions:
       contents: write
+      pull-requests: write
     needs: security
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.commit-data.outputs.TAG_MSG }}
     steps:
       - name: Сheckout on [${{env.RELEASE_BRACH}}] and v [${{env.tag}}]
         uses: actions/checkout@v2
