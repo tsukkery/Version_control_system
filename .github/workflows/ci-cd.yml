@@ -151,7 +151,7 @@ jobs:
 
       - name: Build and push Docker image to DockerHub
         id: docker-build-push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./dockerfile
