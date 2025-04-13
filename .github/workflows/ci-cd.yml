@@ -104,10 +104,13 @@ jobs:
 
       - name: Commit and set tag
         run: |
-          git add .
-          git commit -m "${{ env.COMMIT_MSG }}"
-          git tag -a v${{ env.TAG_MSG }} -m "update tag"
-          git push -u origin ${{ env.RELEASE_BRANCH }} --tags
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "${{ env.COMMIT_MSG }}"
+            git tag -a v${{ env.TAG_MSG }} -m "update tag"
+            git push -u origin ${{ env.RELEASE_BRANCH }} --tags
+          else
+            echo "No changes to commit."
 
       - name: Set version label
         if: success()
