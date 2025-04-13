@@ -175,8 +175,3 @@ if __name__ == "__main__":
         undo()
     else:
         parser.print_help()
-    
-    print(f"Version updated from {current_version} to {new_version}.")
-
-if __name__ == "__main__":
-    main()
