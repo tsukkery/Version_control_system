@@ -1,6 +1,7 @@
 name: Version update runner
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [closed]
     branches:
@@ -56,6 +57,7 @@ jobs:
     uses: tsukkery/Version_control_system/.github/workflows/security.yml@release
 
   update-version:
+    name: (VER) Update version
     permissions:
       contents: write
       pull-requests: write
@@ -64,9 +66,6 @@ jobs:
     outputs:
       tag: ${{ steps.commit-data.outputs.TAG_MSG }}
     steps:
-      - name: Сheckout on [${{env.RELEASE_BRACH}}] and v [${{env.tag}}]
-        uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -75,7 +74,7 @@ jobs:
       - name: Get branch names
         id: branch-names
         uses: tj-actions/branch-names@v8
-
+        
       - name: Checkout on [${{ env.RELEASE_BRANCH }}]
         uses: actions/checkout@v4
 
@@ -89,18 +88,26 @@ jobs:
         run:
           python3 ${{ env.VERSION_UPDATE_SCRIPT }} ${{ env.VERSION_FILE }} ${{ env.PATCH }}
 
-      
+      - name: Write version and add commit data
+        id: commit-data
+        run: |
+          COMMIT_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} --version_log)
+          TAG_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} --version)
+          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
+          echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_ENV
+          echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_OUTPUT
 
       - name: Setup Git
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
-      - name: Commit and push changes
+      - name: Commit and set tag
         run: |
           git add .
-          git commit -m "Update version"
-          git push origin ${RELEASE}
+          git commit -m "${{ env.COMMIT_MSG }}"
+          git tag -a v${{ env.TAG_MSG }} -m "update tag"
+          git push -u origin ${{ env.RELEASE_BRANCH }} --tags
 
       - name: Set version label
         if: success()
