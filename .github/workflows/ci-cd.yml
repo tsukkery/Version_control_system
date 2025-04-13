@@ -69,19 +69,58 @@ jobs:
         with:
           python-version: '3.13.2'
 
-      - name: Run Python script
+      - name: Get branch names
+        id: branch-names
+        uses: tj-actions/branch-names@v8
+
+      - name: Checkout on [${{ env.RELEASE_BRANCH }}]
+        uses: actions/checkout@v4
+
+      - name: Update version [minor]
+        if: startsWith(steps.branch-names.outputs.current_branch,'feature')
+        run:
+          python3 ${{ env.VERSION_UPDATE_SCRIPT }} ${{ env.VERSION_FILE }} ${{ env.MINOR }}
+
+      - name: Update version [patch]
+        if: startsWith(steps.branch-names.outputs.current_branch,'hotfix')
+        run:
+          python3 ${{ env.VERSION_UPDATE_SCRIPT }} ${{ env.VERSION_FILE }} ${{ env.PATCH }}
+
+      - name: Write version and add commit data
+        id: commit-data
         run: |
-          python .github/workflows/version_up.py patch
-      - name: Setup git config
+          COMMIT_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} --version_log)
+          TAG_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} --version)
+          echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
+          echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_ENV
+          echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_OUTPUT
+
+      - name: Setup Git
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-      - name: Commit and push changes
+
+      - name: Commit and set tag
         run: |
           git add .
-          git commit -m "Update version"
-          git push origin release
+          git commit -m "${{ env.COMMIT_MSG }}"
+          git tag -a v${{ env.TAG_MSG }} -m "update tag"
+          git push -u origin ${{ env.RELEASE_BRANCH }} --tags
 
+      - name: Set version label
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['${{ steps.commit-data.outputs.TAG_MSG }}']
+            })
+
+            
   docker-push:
     name: (CI) Docker push
     permissions:
