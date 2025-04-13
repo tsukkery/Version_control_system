@@ -10,14 +10,14 @@ on:
       - '**/docs/**'
 
 env:
-  NAME_VERSION_FILE: ${{ github.workspace }}/version/version
+  VERSION_FILE: ${{ github.workspace }}/
   RELEASE_BRANCH: release
   MINOR: minor
   PATCH: patch
-  VERSION_UP: .github/workflows/version_up.py
+  VERSION_UPDATE_SCRIPT: .github/workflows/version_up.py
   REPO_NAME: ${{ github.event.repository.name }}
   PR_NUMBER: ${{ github.event.number }}
-  URL_REPO: ${{ github.server_url }}/${{ github.repository }}
+  REPO_URL: ${{ github.server_url }}/${{ github.repository }}
   DOCKER_REPO: ${{ secrets.DOCKERHUB_LOGIN }}/${{ github.repository.name }}
   
 jobs:
