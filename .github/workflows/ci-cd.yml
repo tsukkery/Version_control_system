@@ -156,10 +156,8 @@ jobs:
           context: .
           file: ./dockerfile
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_LOGIN }}/${{ env.REPO_NAME }}:latest
-            ${{ secrets.DOCKERHUB_LOGIN }}/${{ env.REPO_NAME }}:v${{ env.tag }}
-
+          tags: ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.REPO_NAME }}:v${{ inputs.update_tag }}
+          
       - name: Set DockerHub label
         if: success()
         uses: actions/github-script@v7
