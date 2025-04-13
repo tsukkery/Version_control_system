@@ -69,7 +69,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.13.2'
+          python-version: '3.10'
 
       - name: Get branch names
         id: branch-names
