@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  web:
+    image: "${DOCKERHUB_IMAGE}"
+    container_name: "${CONTAINER_NAME}-${VERSION}"
+    ports:
+      - "8081:80"
