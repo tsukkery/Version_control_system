@@ -164,7 +164,7 @@ if __name__ == "__main__":
     if args.version_type:
         bump_version(args.version_type, args.message)
     elif args.version:
-        print(get_version(VERSION_FILE))
+        print(read_version(VERSION_FILE))
     elif args.version_log:
         print_version_log(args.version_log)
     elif args.reset_version:
