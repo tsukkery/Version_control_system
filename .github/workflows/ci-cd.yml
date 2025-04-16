@@ -116,7 +116,7 @@ jobs:
     needs: update-version
     uses: tsukkery/version_control_system/.github/workflows/log_changes.yml@release
     with:
-      update_tag: ${{ needs.version_update.outputs.new_version }}
+      update_tag: ${{ needs.update_version.outputs.new_version }}
       
   docker_push:
     needs: log_changes
