@@ -7,7 +7,7 @@ VERSION_FILE = "version"
 VERSION_LOG_FILE = "version_log"
 DEFAULT_VERSION = "0.0.0"
 
-def read_version(filename):
+def get_version(filename):
     try:
         with open(filename, "r", encoding="utf-8") as f:
             line = f.readline().strip()
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     if args.version_type:
         update_version(args.version_type, args.message)
     elif args.version:
-        print(read_version(VERSION_FILE))
+        print(get_version(VERSION_FILE))
     elif args.version_log:
         print_version_log(args.version_log)
     elif args.reset_version:
