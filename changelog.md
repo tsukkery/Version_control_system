@@ -29,3 +29,5 @@
 
 ## 1.0.2.
 + Changed head logo to a cute one
+ 2025.04.16 — updated from hotfix-logs_fix
+***
