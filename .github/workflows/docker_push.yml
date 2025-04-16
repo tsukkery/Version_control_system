@@ -26,6 +26,9 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_LOGIN }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      - name: debug
+        run: echo "${{ needs.update-version.outputs.new_version }}"
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
