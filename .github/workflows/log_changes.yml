@@ -5,48 +5,43 @@ on:
       update_tag:
         type: string
         required: true
-        description: "The version tag to be updated in the changelog"
+        description: "update version tag"
 env:
   RELEASE_BRANCH: release
   CHANGELOG_FILE: changelog.md
-
 jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{env.RELEASE_BRANCH}}
+      - name: Сheckout on [${{env.RELEASE_BRACH}}]
+        uses: actions/checkout@v2
 
-      - name: Pull latest changes
-        run: git pull
-
-      - name: Update changelog
+      - name: Git pull
         run: |
-          TIMESTAMP=$(date +"%Y.%m.%d %H:%M:%S")
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          ENTRY="#### ${{inputs.update_tag}} - ${TIMESTAMP} ${BRANCH_NAME}\n---"
-          echo -e "${ENTRY}\n$(cat ${{env.CHANGELOG_FILE}})" > ${{env.CHANGELOG_FILE}}
+          git pull
 
-      - name: Configure git
+      - name: Update [${{env.CHANGELOG_FILE}}]
+        run: |
+          echo "${{inputs.update_tag}} $(date +"%Y.%m.%d") — updated from ${{ github.event.pull_request.head.ref }}" >> ${{env.CHANGELOG_FILE}} 
+          echo "***" >> ${{env.CHANGELOG_FILE}} 
+
+      - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-
       - name: Commit and push changes
         run: |
-          git add ${{env.CHANGELOG_FILE}}
-          git commit -m "chore: Update ${CHANGELOG_FILE} for ${{inputs.update_tag}}"
+          git add .
+          git commit -m "Update ${CHANGELOG_FILE}"
           git push origin ${{env.RELEASE_BRANCH}}
 
-      - name: Upload changelog artifact
+      - name: Add to artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{env.CHANGELOG_FILE}}
           path: ${{env.CHANGELOG_FILE}}
 
-      - name: Label pull request
+      - name: Add label to pull request
         uses: actions/github-script@v7
         with:
           script: |
@@ -54,5 +49,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              labels: [`changelog-${{inputs.update_tag}}`]
+              labels: ['changelog-${{inputs.update_tag}}']
             })
