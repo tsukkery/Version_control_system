@@ -93,7 +93,7 @@ jobs:
         id: commit-data
         run: |
           COMMIT_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} --version_log)
-          TAG_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} --version)
+          TAG_MSG=$(python3 ${{ env.VERSION_UPDATE_SCRIPT }} ${{ github.workspace }} --version)
           echo "COMMIT_MSG=${COMMIT_MSG}" >> $GITHUB_ENV
           echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_ENV
           echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_OUTPUT
