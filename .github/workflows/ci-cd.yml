@@ -138,4 +138,5 @@ jobs:
     uses: tsukkery/version_control_system/.github/workflows/docker_push.yml@release
     with:
       update_tag: ${{ needs.version_update.outputs.new_version }}
+    secrets: inherit
         
