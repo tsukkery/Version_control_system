@@ -104,9 +104,13 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add .
-          git commit -m "Update version"
-          git push origin ${RELEASE_BRANCH}
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Update version"
+            git push origin ${RELEASE_BRANCH}
+          else
+            echo "No changes to commit."
+          fi
 
   log_changes:
     needs: update-version
