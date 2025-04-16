@@ -9,7 +9,7 @@ on:
 
 
 env:
-  VERSION_FILE: ${{ github.workspace }}/
+  VERSION_FILE: ${{ github.workspace }}/version/version
   RELEASE_BRANCH: release
   MINOR: minor
   PATCH: patch
