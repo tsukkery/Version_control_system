@@ -65,7 +65,7 @@ jobs:
     needs: security
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.commit-data.outputs.TAG_MSG }}
+      new_version: ${{ steps.commit-data.outputs.TAG_MSG }}
     steps:
       - name: Set up Python
         uses: actions/setup-python@v2
