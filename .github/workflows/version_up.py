@@ -162,7 +162,7 @@ if __name__ == "__main__":
         parser.error("'-y' can only be specified with 'reset_version' or 'reset_version_log'!")
 
     if args.version_type:
-        bump_version(args.version_type, args.message)
+        update_version(args.version_type, args.message)
     elif args.version:
         print(read_version(VERSION_FILE))
     elif args.version_log:
