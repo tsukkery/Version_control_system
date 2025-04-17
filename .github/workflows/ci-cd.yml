@@ -65,29 +65,36 @@ jobs:
     needs: security
     runs-on: ubuntu-latest
     outputs:
-      new_version: ${{ steps.output-tag.outputs.TAG_MSG }}
+      new_version: ${{steps.output-tag.outputs.TAG_MSG}}
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
-
-      - name: Get branch names
-        id: branch-names
+      - name: Parse branch name
+        id: parse-data
         uses: tj-actions/branch-names@v8
         
-      - name: Checkout on [${{ env.RELEASE_BRANCH }}]
+      - name: Сheckout on [${{env.RELEASE}}]
         uses: actions/checkout@v3
+        
+      - name: Validate branch (feature/hotfix)
+        id: validate_branch
+        if: |
+          contains(steps.parse-data.outputs.current_branch, 'feature') || 
+          contains(steps.parse-data.outputs.current_branch, 'hotfix')
+        run: echo "Valid branch"
 
-      - name: Update version [minor]
-        if: startsWith(steps.branch-names.outputs.current_branch,'feature')
-        run:
-          python3 ${{ env.VERSION_UPDATE_SCRIPT }} ${{ env.VERSION_FILE }} ${{ env.MINOR }}
+      - name: Run minor version update script
+        id: update-minor-version
+        if: |
+          contains(steps.parse-data.outputs.current_branch, 'feature')
+        run: |
+          echo "python ${VERSION_UPDATE_SCRIPT} ${MINOR} ${VERSION_FILE}"
+          python ${VERSION_UPDATE_SCRIPT} ${MINOR} ${VERSION_FILE}
 
-      - name: Update version [patch]
-        if: startsWith(steps.branch-names.outputs.current_branch,'hotfix')
-        run:
-          python3 ${{ env.VERSION_UPDATE_SCRIPT }} ${{ env.VERSION_FILE }} ${{ env.PATCH }}
+      - name: Run patch version update script
+        id: update-patch-version
+        if: |
+          contains(steps.parse-data.outputs.current_branch, 'hotfix')
+        run: |
+          python ${VERSION_UPDATE_SCRIPT} ${PATCH} ${VERSION_FILE}
 
       - name: Set output tag
         id: output-tag
@@ -97,20 +104,16 @@ jobs:
           echo "$TAG_MSG"
           echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_OUTPUT
           
-      - name: Setup Git
+      - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
-
+          
       - name: Commit and push changes
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "Update version"
-            git push origin ${RELEASE_BRANCH}
-          else
-            echo "No changes to commit."
-          fi
+          git add .
+          git commit -m "Update version"
+          git push origin ${RELEASE}
 
   log_changes:
     needs: update-version
