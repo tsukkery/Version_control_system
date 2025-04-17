@@ -31,3 +31,5 @@
 + Changed head logo to a cute one
  2025.04.16 — updated from hotfix-logs_fix
 ***
+ 2025.04.17 — updated from hotfix-cicdchange
+***
