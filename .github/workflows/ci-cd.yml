@@ -115,6 +115,9 @@ jobs:
           git commit -m "Update version"
           git push origin ${RELEASE}
 
+      - name: debug
+        run: echo "${{TAG_MSG}}"
+
   log_changes:
     needs: update-version
     uses: tsukkery/version_control_system/.github/workflows/log_changes.yml@release
