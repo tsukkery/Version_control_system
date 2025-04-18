@@ -9,9 +9,7 @@ on:
         description: "update version tag"
         
 env:
-  REPO_NAME: 'version_control_system'
-  DOCKERFILE: 'dockerfile'
-  README: 'README.md'
+  REPO_NAME: ${{ github.event.repository.name }}
 
 jobs:
   docker-push:
