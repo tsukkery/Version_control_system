@@ -53,3 +53,5 @@
 ***
 1.2.0 2025.04.18 — updated from feature-textchange-1
 ***
+1.2.1 2025.04.18 — updated from hotfix-dockerpush-fix
+***
