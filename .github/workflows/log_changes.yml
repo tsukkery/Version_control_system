@@ -16,7 +16,7 @@ jobs:
       - name: debug
         run: echo "${{ inputs.update_tag }}"
         
-      - name: Сheckout on [${{env.RELEASE_BRACH}}]
+      - name: Сheckout on [${{env.RELEASE_BRANCH}}]
         uses: actions/checkout@v2
 
       - name: Git pull
