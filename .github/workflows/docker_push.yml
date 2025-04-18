@@ -44,7 +44,7 @@ jobs:
           context: .
           file: ./dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.REPO_NAME }}:v${{ inputs.update_tag }}
+          tags: ${{ secrets.DOCKER_HUB_USER }}/${{ env.REPO_NAME }}:v${{ inputs.update_tag }}
 
       - name: Update Docker Hub description via API
         run: |
