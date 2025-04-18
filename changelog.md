@@ -51,3 +51,5 @@
 ***
 1.1.0 2025.04.18 — updated from feature-textchange
 ***
+1.2.0 2025.04.18 — updated from feature-textchange-1
+***
