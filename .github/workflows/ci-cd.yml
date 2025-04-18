@@ -102,7 +102,6 @@ jobs:
           python ${VERSION_UPDATE_SCRIPT} read ${VERSION_FILE}
           TAG_MSG=$(python ${VERSION_UPDATE_SCRIPT} read ${VERSION_FILE})
           echo "$TAG_MSG"
-          echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_ENV
           echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_OUTPUT
           
       - name: Setup git config
@@ -120,12 +119,12 @@ jobs:
     needs: update-version
     uses: tsukkery/version_control_system/.github/workflows/log_changes.yml@release
     with:
-      update_tag: ${{ needs.update_version.outputs.new_version }}
+      update_tag: ${{ needs.update-version.outputs.new_version }}
       
   docker_push:
     needs: log_changes
     uses: tsukkery/version_control_system/.github/workflows/docker_push.yml@release
     with:
-      update_tag: ${{ needs.update_version.outputs.new_version }}
+      update_tag: ${{ needs.update-version.outputs.new_version }}
     secrets: inherit
         
