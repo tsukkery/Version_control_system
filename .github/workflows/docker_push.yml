@@ -15,8 +15,6 @@ jobs:
   docker-push:
     name: Docker push job
     runs-on: ubuntu-latest
-    env:
-      tag: ${{inputs.update_tag}}
     steps:
       - name: Сheckout on [${{env.RELEASE_BRACH}}]
         uses: actions/checkout@v3
