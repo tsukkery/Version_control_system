@@ -45,3 +45,5 @@
 ***
 1.0.12 2025.04.18 — updated from hotfix-dockerpush-fix
 ***
+1.0.12 2025.04.18 — updated from tsukkery-patch-5
+***
