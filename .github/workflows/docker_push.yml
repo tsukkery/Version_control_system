@@ -15,8 +15,11 @@ jobs:
   docker-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Сheckout on [${{env.RELEASE_BRACH}}]
+      - name: Сheckout on [${{env.RELEASE_BRANCH}}]
         uses: actions/checkout@v3
+
+      - name: Debug
+        run: echo "${{ inputs.update_tag }}"
 
       - name: Release info
         uses: actions/github-script@v7
@@ -34,9 +37,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_LOGIN }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-      - name: debug
-        run: echo "${{ inputs.update_tag }}"
 
       - name: Build and push
         uses: docker/build-push-action@v4
