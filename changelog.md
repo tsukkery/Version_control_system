@@ -43,3 +43,5 @@
 ***
 1.0.11 2025.04.18 — updated from hotfix-cicdchange
 ***
+1.0.12 2025.04.18 — updated from hotfix-dockerpush-fix
+***
