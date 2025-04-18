@@ -102,6 +102,7 @@ jobs:
           python ${VERSION_UPDATE_SCRIPT} read ${VERSION_FILE}
           TAG_MSG=$(python ${VERSION_UPDATE_SCRIPT} read ${VERSION_FILE})
           echo "$TAG_MSG"
+          echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_ENV
           echo "TAG_MSG=${TAG_MSG}" >> $GITHUB_OUTPUT
           
       - name: Setup git config
