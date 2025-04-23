@@ -1,0 +1,33 @@
+name: Build release
+on:
+  workflow_call:
+    inputs:
+      update_tag:
+        type: string
+        required: true
+        description: "update version tag"
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ inputs.update_tag }}
+          release_name: Release v${{ inputs.update_tag }}
+          body: |
+            ## About 
+            ${{ github.event.repository.description }}
+            
+             - Poll request: `${{ github.event.number }}`
+             - Dockerhub: https://hub.docker.com/repository/docker/${{ secrets.DOCKER_HUB_USER }}/${{ env.REPO_NAME }}/tags
+          draft: false
+          prerelease: false
