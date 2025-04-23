@@ -1,0 +1,58 @@
+name: Telegram notification
+on:
+  workflow_call:
+    inputs:
+      update_tag:
+        type: string
+        required: true
+        description: "update version tag"
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+  URL_REPO: ${{ github.server_url }}/${{ github.repository }}
+  PR_NUMBER: ${{ github.event.number }}
+  CHANGELOG_FILE: changelog.md
+jobs:
+  telegram_notify:
+    runs-on: ubuntu-latest
+    name: Notify
+    steps:
+      - name: Parse branch name
+        id: parse-data
+        uses: tj-actions/branch-names@v8
+
+      - name: Сheckout on [${{env.RELEASE}}]
+        uses: actions/checkout@v3
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY.MM.DD HH:mm:ss
+          utcOffset: "+08:00"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{env.CHANGELOG_FILE}}
+
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHANNEL }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          document: ${{env.CHANGELOG_FILE}}
+          message: |
+            Обновление обновление обновление
+            <b>Проект</b> : <code>${{ env.REPO_NAME }}</code>
+            <b>Версия</b> : <code>${{ inputs.update_tag }}</code>
+            <b>Дата</b>: <code>${{ steps.current-time.outputs.formattedTime }}</code>
+            <b>Автор</b>: <a href="https://github.com/tsukkery">tsukkery</a> (<a href="https://hub.docker.com/repositories/${{ secrets.DOCKER_HUB_USER }}">${{ secrets.DOCKER_HUB_USER }}</a>)
+            
+            Информация о Git репозитории
+            <b>Pull request</b> : <a href="${{env.URL_REPO}}/pull/${{ env.PR_NUMBER }}">${{ env.PR_NUMBER }}</a>
+            <b>Тег</b>: <a href="${{env.URL_REPO}}/releases/tag/v${{inputs.update_tag}}">${{inputs.update_tag}}</a>
+            
+            Информация о Docker репозитории
+            <b>Название</b>: <a href="https://hub.docker.com/repository/docker/${{ secrets.DOCKER_HUB_USER }}/${{ env.REPO_NAME }}/general">${{ env.REPO_NAME }}</a>
+            <b>Тег</b>: <a href="https://hub.docker.com/repository/docker/${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.REPO_NAME }}/tags/v${{inputs.update_tag}}">${{inputs.update_tag}}</a>
+            <b>Полное имя</b>:  <a href="https://hub.docker.com/repository/docker/${{ secrets.DOCKER_HUB_USER }}/${{ env.REPO_NAME }}/tags">${{ secrets.DOCKER_HUB_USER }}/${{ env.REPO_NAME }}:v${{inputs.update_tag}}</a>
