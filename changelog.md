@@ -57,3 +57,5 @@
 ***
 1.2.2 2025.04.23 — updated from hotfix-testing_telegram_notify
 ***
+1.2.3 2025.04.23 — updated from hotfix-deploy_test
+***
