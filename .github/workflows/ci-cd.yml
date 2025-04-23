@@ -139,3 +139,10 @@ jobs:
     with:
       update_tag: ${{ needs.update-version.outputs.new_version }}
 
+  deploy:
+    needs: [docker_push, update-version]
+    uses: tsukkery/version_control_system/.github/workflows/deploy.yml@release
+    secrets: inherit
+    with:
+      update_tag: ${{ needs.update-version.outputs.new_version }}
+
