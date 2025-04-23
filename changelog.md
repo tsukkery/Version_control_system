@@ -55,3 +55,5 @@
 ***
 1.2.1 2025.04.18 — updated from hotfix-dockerpush-fix
 ***
+1.2.2 2025.04.23 — updated from hotfix-testing_telegram_notify
+***
